@@ -152,7 +152,6 @@ def editViews():
 
 
 @app.route("/check", methods=["GET"])
-@login_required
 def check():
     """Return true if username available, else false, in JSON format"""
     if validate_user(request.args.get("username")):
