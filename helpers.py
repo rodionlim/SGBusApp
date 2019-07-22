@@ -1,9 +1,8 @@
 # Helper functions for SG Bus Timings Web Application
 
 import requests
-# import mysql.connector
+import MySQLdb
 from flask import render_template, session, redirect
-from mysql.connector import MySQLConnection, Error
 from configparser import ConfigParser
 import datetime
 from functools import wraps
@@ -48,8 +47,8 @@ def read_db_config(filename='config.ini', section='mysql'):
 # Query USERVIEWS table, filtering for ID
 def query_view(ID, uniqueFlag=False, view=False):
     try:
-        conn = MySQLConnection(**read_db_config())
-        cursor = conn.cursor(dictionary=True)
+        conn = MySQLdb.connect(**read_db_config())
+        cursor = conn.cursor(MySQLdb.cursors.DictCursor)
         if not uniqueFlag:
             if view:
                 query = "SELECT * FROM USERVIEWS WHERE ID = %s AND VIEW = %s"
@@ -65,8 +64,8 @@ def query_view(ID, uniqueFlag=False, view=False):
         rows = cursor.fetchall()        
         print("Total Rows: ", cursor.rowcount)
         res = rows    
-    except Error as e:
-        print(e)   
+    except:
+        print("Error") 
         res = None
     finally:
         cursor.close()
@@ -77,14 +76,14 @@ def query_view(ID, uniqueFlag=False, view=False):
 # Helper function to query all rows from USERVIEWS table
 def query_all():
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM USERVIEWS")
         rows = cursor.fetchall()        
         print("Total Rows: ", cursor.rowcount)
         return rows    
-    except Error as e:
-        print(e)        
+    except:
+        print("Error")        
     finally:
         cursor.close()
         conn.close()
@@ -94,13 +93,13 @@ def query_all():
 def validate_user(username):
     """Return true if username available, else false, in JSON format"""
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM USER WHERE USERNAME = %s", (username,))
         rows = cursor.fetchall()        
         res = False if len(rows) == 1 else True
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
         res = False
     finally:
         cursor.close()
@@ -119,16 +118,12 @@ def insert_user(username, pwd):
     args = (username, pwd)
     
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
-        cursor.execute(query, args)        
-        if cursor.lastrowid:
-            print('last insert id', cursor.lastrowid)
-        else:
-            print('last insert id not found')            
+        cursor.execute(query, args)                   
         conn.commit()    
-    except Error as e:
-        print(e)        
+    except:
+        print("Error")    
     finally:
         cursor.close()
         conn.close()
@@ -138,12 +133,12 @@ def insert_user(username, pwd):
 # Select max ID from USER table to store into session
 def selectMaxUser():
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute("select max(ID) from user")     
         ID = cursor.fetchall()[0][0]
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
         ID = None
     finally:
         cursor.close()
@@ -157,14 +152,14 @@ def create_view(ID, view):
     args = (view, ID, str(ID) + view)
     
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute(query, args)     
         conn.commit()
         print("Created a new view")
         res = 1
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
         res = None        
     finally:
         cursor.close()
@@ -190,14 +185,14 @@ def insert_view(ID, view, viewbusstopservice):
         return 2
     
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute(query, args)                 
         conn.commit()    
         print("Inserted a new view")
         res = 1
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
         res = None      
     finally:
         cursor.close()
@@ -211,7 +206,7 @@ def delete_view(ID, view, viewID=False):
     query3 = "DELETE FROM USERVIEWS WHERE ID = %s AND VIEW = %s and VIEWID = %s"
     
     try:
-        conn = MySQLConnection(**read_db_config())        
+        conn = MySQLdb.connect(**read_db_config())        
         cursor = conn.cursor()
         if viewID:
             args = (ID, view, viewID)
@@ -223,8 +218,8 @@ def delete_view(ID, view, viewID=False):
         conn.commit()        
         print("Successful Deletion")
         res = 1
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
         res = None
     finally:
         cursor.close()
@@ -238,13 +233,13 @@ def reset_table(tab):
     args = (tab, )
     
     try:
-        conn = MySQLConnection(**read_db_config())
+        conn = MySQLdb.connect(**read_db_config())
         cursor = conn.cursor()
         cursor.execute(query, args)
         conn.commit()        
         print("Successful Deletion")
-    except Error as e:
-        print(e)
+    except:
+        print("Error")
     finally:
         cursor.close()
         conn.close()        

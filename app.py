@@ -8,7 +8,7 @@ Version: 0.1
 from flask import Flask, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
-from mysql.connector import MySQLConnection, Error
+import MySQLdb
 import json
 from werkzeug.exceptions import default_exceptions, HTTPException, \
 InternalServerError
@@ -66,13 +66,13 @@ def login():
 
          # Query database for username
          try:
-             conn = MySQLConnection(**read_db_config())
+             conn = MySQLdb.connect(**read_db_config())
              cursor = conn.cursor()
              cursor.execute("SELECT * FROM USER WHERE USERNAME = %s", \
                             (request.form.get("username"),))
              rows = cursor.fetchall()
-         except Error as e:
-             print(e)
+         except:
+             print("Error")
              rows = "ERROR"
          finally:
              cursor.close()
