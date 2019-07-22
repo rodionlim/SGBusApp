@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    User Views
+{% endblock %}
+
+{% block main %}
+	
+<!-- User Actions for Edit Views Page --> 
+<div class="container">
+	<div class="row mb-3">
+		<div class="text-xs-left"><strong>Click to refresh bus arrival timings</strong></div>
+	</div>
+	<div class="row">	
+		<div class="col-3">
+			<div class="list-group mt-4" id="views" role="tablist">
+			{% for x in uv %}
+				<a class="list-group-item list-group-item-action outer-list" data-toggle="list" href='#{{ x["VIEW"] }}' role="tab">{{ x["VIEW"] }}</a>
+			{% endfor %}
+			</div>
+		</div>
+		<div class="col-9">
+			<div class="tab-content">
+			{% for x in uv %}
+				<div class="tab-pane" id="{{ x['VIEW'] }}" role="tabpanel">
+				<ul class="list-group">
+				{% for y in av %}
+					{% if y["VIEW"] == x["VIEW"] %}		
+						<li class="list-group-item" data-value="{{ y['VIEWBUSSTOPSERVICE'] }}">BusStop: {{ y["VIEWBUSSTOPSERVICE"].split("|")[0] }} | Service: {{ y["VIEWBUSSTOPSERVICE"].split("|")[1] }}</li>
+					{% endif %}		
+				{% endfor %}
+				</ul>
+				</div>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+	<script>
+		var allViews = {{ av|safe }};
+		var uniqueViews = {{ uv|safe }};
+		$('.outer-list').click(function(){
+			var tmpView = $(this)[0].text;
+			$.get("queryAPI?viewname=" + tmpView).done(function(data){
+				var i = 0;
+				for (x in data){					
+					$('#' + tmpView + ' ul li')[i] .innerHTML = "Bus Stop | Service : " + x.split("|")[0] + ' | ' + x.split("|")[1] + ' - [' + data[x].join(", ") + "]";
+					i+=1;
+				};
+			});			
+		});
+	</script>
+{% endblock %}

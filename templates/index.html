@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    SG Buses
+{% endblock %}
+
+{% block main %}
+    <p>This web application allows users to check for incoming bus timings in Singapore. Multiple bus service numbers and bus stops are grouped together, forming a view. Users are allowed to save multiple views and can query these views for bus timings via this web application.</p>
+	{% if session.user_id %}
+	
+	<p>Users can <a href="/editViews">edit views</a> or <a href="/getViews">get bus timings</a> in their specified views in this application. Alternatively, navigation can be done via the links on the navigation bar.</p>
+	
+	{% else %}
+	
+	<p>To begin, please <a href="/register">register</a> for an account either by clicking here or on the link in the top right. Views are tagged to individual accounts and permissioned accordingly. If you have already created an account, please <a href="/login">login</a> here.</p>
+	
+	{% endif %}
+	
+{% endblock %}
