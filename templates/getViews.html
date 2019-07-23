@@ -38,8 +38,6 @@
 </div>
 
 	<script>
-		var allViews = {{ av|safe }};
-		var uniqueViews = {{ uv|safe }};
 		$('.outer-list').click(function(){
 			var tmpView = $(this)[0].text;
 			$.get("queryAPI?viewname=" + tmpView).done(function(data){

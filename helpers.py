@@ -270,7 +270,7 @@ def parse_view(ID, view):
           return "NA"
       
       diff = str(datetime.datetime.strptime(ts[:19],"%Y-%m-%dT%H:%M:%S") - \
-                 datetime.datetime.now())[:7]
+                 (datetime.datetime.utcnow() + datetime.timedelta(hours=+8)))[:7]
       if diff == "-1 day,":
           return "Arrived"
       else:
