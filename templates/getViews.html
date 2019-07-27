@@ -12,14 +12,14 @@
 		<div class="text-xs-left"><strong>Click to refresh bus arrival timings</strong></div>
 	</div>
 	<div class="row">	
-		<div class="col-3">
+		<div class="col-12 col-sm-3">
 			<div class="list-group mt-4" id="views" role="tablist">
 			{% for x in uv %}
 				<a class="list-group-item list-group-item-action outer-list" data-toggle="list" href='#{{ x["VIEW"] }}' role="tab">{{ x["VIEW"] }}</a>
 			{% endfor %}
 			</div>
 		</div>
-		<div class="col-9">
+		<div class="col-12 col-sm-9">
 			<div class="tab-content">
 			{% for x in uv %}
 				<div class="tab-pane" id="{{ x['VIEW'] }}" role="tabpanel">
