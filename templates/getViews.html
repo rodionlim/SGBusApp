@@ -15,14 +15,14 @@
 		<div class="col-12 col-sm-3">
 			<div class="list-group mt-4" id="views" role="tablist">
 			{% for x in uv %}
-				<a class="list-group-item list-group-item-action outer-list" data-toggle="list" href='#{{ x["VIEW"] }}' role="tab">{{ x["VIEW"] }}</a>
+				<a class="list-group-item list-group-item-action outer-list" data-toggle="list" href='#ev{{ loop.index }}' role="tab">{{ x["VIEW"] }}</a>
 			{% endfor %}
 			</div>
 		</div>
 		<div class="col-12 col-sm-9">
 			<div class="tab-content">
 			{% for x in uv %}
-				<div class="tab-pane" id="{{ x['VIEW'] }}" role="tabpanel">
+				<div class="tab-pane" id="ev{{ loop.index }}" role="tabpanel">
 				<ul class="list-group">
 				{% for y in av %}
 					{% if y["VIEW"] == x["VIEW"] %}		
@@ -39,11 +39,12 @@
 
 	<script>
 		$('.outer-list').click(function(){
+			var tmpViewID = $(this).eq(0).attr("href").substring(1);
 			var tmpView = $(this)[0].text;
 			$.get("queryAPI?viewname=" + tmpView).done(function(data){
 				var i = 0;
 				for (x in data){					
-					$('#' + tmpView + ' ul li')[i] .innerHTML = "Bus Stop | Service : " + x.split("|")[0] + ' (' + + x.split("|")[1] + ')' + ' | ' + x.split("|")[2] + ' - [' + data[x].join(", ") + "]";
+					$('#' + tmpViewID + ' ul li')[i] .innerHTML = "Bus Stop | Service : " + x.split("|")[0] + ' (' + + x.split("|")[1] + ')' + ' | ' + x.split("|")[2] + ' - [' + data[x].join(", ") + "]";
 					i+=1;
 				};
 			});			
