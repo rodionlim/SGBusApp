@@ -1,5 +1,6 @@
-# Ignore all .pyc files
+# Ignore all .pyc files and pycache directory
 *.pyc
+__pycache__/
 
 # Ignore CS50 submission folder
 CS50*submission/
