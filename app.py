@@ -15,7 +15,7 @@ InternalServerError
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import insert_user, selectMaxUser, validate_user, apology, \
 read_db_config, query_view, create_view, delete_view, insert_view, \
-parse_view, login_required
+parse_view, login_required, extract_busStopData
 
 # Configure application
 app = Flask(__name__)
@@ -38,6 +38,9 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Store bus stop details into memory
+busStopDict = extract_busStopData()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -220,7 +223,7 @@ def getViews():
 def queryAPI():
     """Queries the LTA API to populate views"""
     view = request.args.get("viewname")
-    return jsonify(parse_view(session["user_id"], view))
+    return jsonify(parse_view(session["user_id"], view, busStopDict))
 
 
 def errorhandler(e):

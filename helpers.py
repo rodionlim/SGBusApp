@@ -257,13 +257,36 @@ def queryAPI(path, params):
     return requests.get(uri + path, headers=headers, params=params).json()
 
 
+# Get all bus stop descriptions
+def extract_busStopData():
+    counter = 0
+    bsList = [] #bus stop list
+    dataList = [] # information about each bus stop
+    flatten = lambda l: [y for x in l for y in x]
+    
+    while True:  
+        res = queryAPI("ltaodataservice/BusStops",{"$skip" : str(counter)})
+        if len(res["value"]) == 0:
+            break
+        else:
+            bsList.append([x["BusStopCode"] for x in res["value"]])
+            dataList.append(res["value"])
+            counter+=500
+            
+    bsList = flatten(bsList)
+    dataList = flatten(dataList)
+    return dict(zip(bsList,dataList))
+
+
 # Get the bus arrival timings based on User ID and requested view
-def parse_view(ID, view):  
+def parse_view(ID, view, busStopDict):  
     res = query_view(ID)
     res_filtered = [x["VIEWBUSSTOPSERVICE"] for x in res if x["VIEW"] == view]
+    res_filtered = [busStopDict.get(x.split("|")[0]).get("Description") + \
+                    '|'+x for x in res_filtered]
     res_api = [queryAPI('ltaodataservice/BusArrivalv2?', \
-                        { 'BusStopCode' : x.split("|")[0], \
-                         'ServiceNo' : x.split("|")[1]}) for x in res_filtered]
+                        { 'BusStopCode' : x.split("|")[1], \
+                          'ServiceNo' : x.split("|")[2]}) for x in res_filtered]
     
     def fmtTime(ts):
       if len(ts) != 25:

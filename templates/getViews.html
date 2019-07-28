@@ -26,7 +26,7 @@
 				<ul class="list-group">
 				{% for y in av %}
 					{% if y["VIEW"] == x["VIEW"] %}		
-						<li class="list-group-item" data-value="{{ y['VIEWBUSSTOPSERVICE'] }}">BusStop: {{ y["VIEWBUSSTOPSERVICE"].split("|")[0] }} | Service: {{ y["VIEWBUSSTOPSERVICE"].split("|")[1] }}</li>
+						<li class="list-group-item" data-value="{{ y['VIEWBUSSTOPSERVICE'] }}">BusStop: {{ y["VIEWBUSSTOPSERVICE"].split("|")[0] }} ({{ y["VIEWBUSSTOPSERVICE"].split("|")[1] }}) | Service: {{ y["VIEWBUSSTOPSERVICE"].split("|")[2] }}</li>
 					{% endif %}		
 				{% endfor %}
 				</ul>
@@ -43,7 +43,7 @@
 			$.get("queryAPI?viewname=" + tmpView).done(function(data){
 				var i = 0;
 				for (x in data){					
-					$('#' + tmpView + ' ul li')[i] .innerHTML = "Bus Stop | Service : " + x.split("|")[0] + ' | ' + x.split("|")[1] + ' - [' + data[x].join(", ") + "]";
+					$('#' + tmpView + ' ul li')[i] .innerHTML = "Bus Stop | Service : " + x.split("|")[0] + ' (' + + x.split("|")[1] + ')' + ' | ' + x.split("|")[2] + ' - [' + data[x].join(", ") + "]";
 					i+=1;
 				};
 			});			
